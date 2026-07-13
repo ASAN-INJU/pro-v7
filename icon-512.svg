@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-<rect width="512" height="512" rx="96" fill="#0b1f36"/>
-<path d="M95 355 L185 265 L245 315 L390 150" fill="none" stroke="#55a6ff" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M330 150 H390 V210" fill="none" stroke="#55a6ff" stroke-width="38" stroke-linecap="round"/>
-<text x="256" y="430" font-size="70" font-family="Arial,sans-serif" font-weight="700" text-anchor="middle" fill="white">V7</text>
-</svg>
