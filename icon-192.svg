@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 512 512">
+<rect width="512" height="512" rx="96" fill="#081c31"/>
+<path d="M90 350 L175 270 L240 310 L395 145" fill="none" stroke="#52a8ff" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M335 145 H395 V205" fill="none" stroke="#52a8ff" stroke-width="36" stroke-linecap="round"/>
+<text x="256" y="430" font-size="70" font-family="Arial" font-weight="700" text-anchor="middle" fill="white">V8</text>
+</svg>

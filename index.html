@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#081c31">
+<link rel="manifest" href="manifest.json">
+<title>Hi Ultimate V8 실전 연결판</title>
+<style>
+:root{--navy:#081c31;--blue:#2563eb;--bg:#f3f6fb;--card:#fff;--text:#182230;--muted:#6b7280;--green:#0a9365;--red:#d33b49;--orange:#e78315;--line:#dce4ef;--shadow:0 10px 25px rgba(8,28,49,.10)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR","Malgun Gothic",Arial,sans-serif}button,input,select{font:inherit}.app{max-width:650px;margin:auto;min-height:100vh;padding-bottom:90px}
+header{position:sticky;top:0;z-index:20;background:linear-gradient(135deg,#081c31,#174b7c);color:#fff;padding:16px;box-shadow:0 5px 18px rgba(0,0,0,.18)}h1{font-size:23px;margin:0;font-weight:950}.sub{font-size:12px;opacity:.82;margin-top:4px}.status{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.pill{font-size:10px;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18)}
+main{padding:13px}.panel{display:none}.panel.active{display:block}.notice{background:#fff8df;border:1px solid #ecd277;color:#6e5700;border-radius:14px;padding:11px 12px;font-size:12px;line-height:1.55;margin-bottom:11px}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:11px}.box{background:#fff;border:1px solid var(--line);border-radius:15px;padding:11px 4px;text-align:center;box-shadow:var(--shadow)}.box strong{display:block;font-size:20px}.box span{font-size:10px;color:var(--muted)}
+.head{display:flex;justify-content:space-between;align-items:center;margin:16px 2px 8px;gap:8px}.head h2{font-size:18px;margin:0}.small{border:0;background:#e8eef8;color:var(--navy);padding:8px 10px;border-radius:10px;font-weight:850;font-size:12px}
+.cards{display:grid;gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow)}.top{display:flex;justify-content:space-between;gap:8px}.name{font-size:18px;font-weight:950}.ticker{font-size:11px;color:var(--muted);margin-top:3px}.price{font-size:20px;font-weight:950;text-align:right}.up{color:var(--red)}.down{color:var(--blue)}.flat{color:var(--muted)}
+.score{font-size:25px;font-weight:950}.good{color:var(--green)}.mid{color:var(--orange)}.bad{color:var(--red)}.tags{display:flex;gap:5px;flex-wrap:wrap;margin:9px 0}.tag{font-size:10px;border-radius:999px;padding:5px 7px;background:#edf2fa}.tag.hot{background:#ffe5e8;color:#a51f2d}.tag.ok{background:#dff7ed;color:#08704f}.reason{font-size:12px;line-height:1.5;background:#f7f9fc;border-radius:10px;padding:9px}
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:9px}.metric{background:#f1f5fa;border-radius:8px;padding:6px 2px;text-align:center}.metric b{display:block;font-size:12px}.metric span{font-size:9px;color:var(--muted)}.actions{display:flex;gap:7px;margin-top:10px}.actions button{flex:1;border:0;border-radius:10px;padding:9px;font-size:12px;font-weight:850}.detail{background:#e8eef8;color:var(--navy)}.watch{background:#dff7ed;color:#08704f}
+.form{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow)}label{display:block;font-size:12px;font-weight:850;margin:10px 0 5px}input,select{width:100%;padding:11px;border:1px solid #cfd9e7;border-radius:10px;background:#fff}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.primary{width:100%;border:0;border-radius:11px;padding:12px;background:var(--blue);color:#fff;font-weight:900;margin-top:12px}.secondary{background:#eef2f7;color:var(--navy)}.danger{background:#fff0f1;color:#b42332;border:1px solid #ffcbd0}.help{font-size:11px;color:var(--muted);line-height:1.55}.empty{padding:28px;text-align:center;border:1px dashed #cbd5e1;background:#fff;border-radius:15px;color:var(--muted)}
+nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);max-width:650px;width:100%;display:grid;grid-template-columns:repeat(5,1fr);background:#fff;border-top:1px solid var(--line);padding:6px 3px calc(6px + env(safe-area-inset-bottom));z-index:30}nav button{border:0;background:transparent;color:#6b7280;padding:5px 1px;font-size:10px;font-weight:850}nav .icon{display:block;font-size:20px;margin-bottom:2px}nav button.active{color:var(--blue)}
+.loading{display:none;text-align:center;padding:18px}.loading.show{display:block}.bar{height:8px;background:#e7edf5;border-radius:999px;overflow:hidden}.bar i{display:block;height:100%;background:var(--blue)}
+@media(max-width:400px){.summary{grid-template-columns:repeat(2,1fr)}.metrics{grid-template-columns:repeat(3,1fr)}h1{font-size:20px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+<h1>Hi Ultimate 단타 탐색기 V8</h1>
+<div class="sub">실제 시세 연결 · 이동평균선 · 거래량 · 변동성 자동 분석</div>
+<div class="status"><span class="pill" id="modePill">데모 모드</span><span class="pill" id="timePill">업데이트 대기</span><span class="pill">자동주문 없음</span></div>
+</header>
+<main>
+<section id="home" class="panel active">
+<div class="notice"><b>주의:</b> 후보 점수는 참고용입니다. 자동매수·자동매도 기능은 포함하지 않았으며, 수익을 보장하지 않습니다.</div>
+<div class="summary"><div class="box"><strong id="cnt">0</strong><span>분석 종목</span></div><div class="box"><strong id="strong">0</strong><span>80점 이상</span></div><div class="box"><strong id="surge">0</strong><span>거래량 강세</span></div><div class="box"><strong id="watchCnt">0</strong><span>관심종목</span></div></div>
+<div class="head"><h2>오늘의 후보</h2><button class="small" onclick="refreshAll()">실시간 갱신</button></div>
+<div id="loading" class="loading">데이터를 불러오는 중입니다…</div>
+<div id="stockList" class="cards"></div>
+</section>
+
+<section id="add" class="panel">
+<div class="head"><h2>분석 종목 추가</h2></div>
+<div class="form">
+<label>종목 코드</label><input id="symbolInput" placeholder="예: NVDA, AAPL, 005930.KS">
+<div class="help">미국 종목은 NVDA처럼 입력합니다. 한국 종목 지원 여부는 사용 중인 데이터 제공처에 따라 다를 수 있습니다.</div>
+<label>표시 이름</label><input id="nameInput" placeholder="예: 엔비디아">
+<button class="primary" onclick="addSymbol()">추가 후 분석</button>
+</div>
+<div class="head"><h2>현재 분석 목록</h2></div><div id="symbolList" class="cards"></div>
+</section>
+
+<section id="watch" class="panel">
+<div class="head"><h2>관심종목</h2><button class="small danger" onclick="clearWatch()">전체 삭제</button></div>
+<div id="watchList" class="cards"></div>
+</section>
+
+<section id="journal" class="panel">
+<div class="head"><h2>매매일지</h2></div>
+<div class="form">
+<label>종목</label><input id="jSymbol">
+<div class="grid2"><div><label>매수가</label><input id="jBuy" type="number"></div><div><label>매도가</label><input id="jSell" type="number"></div></div>
+<label>메모</label><input id="jMemo" placeholder="매수 이유와 느낀 점">
+<button class="primary" onclick="saveJournal()">일지 저장</button>
+</div>
+<div class="head"><h2>기록</h2></div><div id="journalList" class="cards"></div>
+</section>
+
+<section id="settings" class="panel">
+<div class="head"><h2>실시간 데이터 연결</h2></div>
+<div class="form">
+<label>데이터 방식</label><select id="provider"><option value="demo">데모 데이터</option><option value="alpha">Alpha Vantage</option><option value="proxy">내 전용 API 서버</option></select>
+<label>Alpha Vantage API 키</label><input id="apiKey" type="password" placeholder="발급받은 키 입력">
+<div class="help">키는 이 브라우저의 localStorage에만 저장됩니다. GitHub 파일에는 기록되지 않습니다.</div>
+<label>전용 API 서버 주소</label><input id="proxyUrl" placeholder="예: https://내서버.example.com/stocks">
+<button class="primary" onclick="saveSettings()">연결 설정 저장</button>
+<button class="primary secondary" onclick="testConnection()">연결 시험</button>
+<button class="primary danger" onclick="resetAll()">앱 초기화</button>
+</div>
+<div class="head"><h2>API 응답 규격</h2></div>
+<div class="form help">전용 서버는 <b>?symbol=NVDA</b> 요청에 대해 symbol, name, price, changePercent, volume, avgVolume, closes 배열을 JSON으로 반환하면 됩니다.</div>
+</section>
+</main>
+<nav>
+<button class="active" onclick="showTab('home',this)"><span class="icon">📊</span>후보</button>
+<button onclick="showTab('add',this)"><span class="icon">➕</span>종목</button>
+<button onclick="showTab('watch',this)"><span class="icon">⭐</span>관심</button>
+<button onclick="showTab('journal',this)"><span class="icon">📝</span>일지</button>
+<button onclick="showTab('settings',this)"><span class="icon">⚙️</span>설정</button>
+</nav>
+</div>
+<script>
+const demo=[
+{symbol:"NVDA",name:"NVIDIA",price:178.22,changePercent:2.41,volume:182000000,avgVolume:145000000,closes:[160,162,164,166,165,168,169,171,170,174,176,178]},
+{symbol:"AAPL",name:"Apple",price:218.42,changePercent:1.12,volume:69000000,avgVolume:56000000,closes:[205,207,206,208,210,211,209,212,214,215,217,218]},
+{symbol:"AMD",name:"AMD",price:166.80,changePercent:3.05,volume:76000000,avgVolume:51000000,closes:[151,153,155,154,157,159,158,161,162,164,165,167]},
+{symbol:"TSLA",name:"Tesla",price:312.60,changePercent:-1.20,volume:132000000,avgVolume:115000000,closes:[300,305,309,307,311,315,318,316,314,313,312,313]},
+{symbol:"PLTR",name:"Palantir",price:141.10,changePercent:4.12,volume:99000000,avgVolume:65000000,closes:[121,124,126,129,130,132,133,136,137,139,140,141]}
+];
+let symbols=JSON.parse(localStorage.getItem("v8symbols")||'["NVDA","AAPL","AMD","TSLA","PLTR"]');
+let names=JSON.parse(localStorage.getItem("v8names")||'{"NVDA":"NVIDIA","AAPL":"Apple","AMD":"AMD","TSLA":"Tesla","PLTR":"Palantir"}');
+let settings=JSON.parse(localStorage.getItem("v8settings")||'{"provider":"demo","apiKey":"","proxyUrl":""}');
+let stocks=JSON.parse(localStorage.getItem("v8stocks")||"null")||demo;
+let watch=JSON.parse(localStorage.getItem("v8watch")||"[]");
+let journal=JSON.parse(localStorage.getItem("v8journal")||"[]");
+
+function avg(a){return a.length?a.reduce((x,y)=>x+y,0)/a.length:0}
+function analyze(s){
+ const c=s.closes||[];const ma5=avg(c.slice(-5)),ma20=avg(c.slice(-20));const volRatio=s.avgVolume?Math.min(3,s.volume/s.avgVolume):1;
+ const trend=ma5>ma20?90:ma5>0?55:40;const volume=Math.round(Math.min(100,volRatio*55));const momentum=Math.max(0,Math.min(100,50+(s.changePercent||0)*10));
+ const volatility=c.length>2?Math.min(100,Math.round((Math.max(...c)-Math.min(...c))/avg(c)*300)):40;
+ const score=Math.max(0,Math.min(100,Math.round(trend*.35+volume*.35+momentum*.30-volatility*.08)));
+ return {...s,ma5,ma20,volRatio,trend,volumeScore:volume,momentum,volatility,score,golden:ma5>ma20};
+}
+function card(s){
+ const a=analyze(s);const cls=a.score>=80?"good":a.score>=65?"mid":"bad";const ch=a.changePercent||0;const watched=watch.includes(a.symbol);
+ return `<div class="card"><div class="top"><div><div class="name">${a.name||a.symbol}</div><div class="ticker">${a.symbol}</div></div><div><div class="price ${ch>0?'up':ch<0?'down':'flat'}">${Number(a.price||0).toLocaleString()}</div><div class="ticker" style="text-align:right">${ch>0?'+':''}${ch.toFixed(2)}%</div></div></div>
+ <div class="tags">${a.golden?'<span class="tag ok">5일선 우위</span>':''}${a.volRatio>=1.3?'<span class="tag hot">거래량 강세</span>':''}<span class="tag">위험 ${a.volatility}</span></div>
+ <div class="reason"><span class="score ${cls}">${a.score}점</span> · 이동평균선, 거래량, 당일 모멘텀을 종합한 후보 점수</div>
+ <div class="metrics"><div class="metric"><b>${a.ma5.toFixed(2)}</b><span>5일 평균</span></div><div class="metric"><b>${a.ma20.toFixed(2)}</b><span>20일 평균</span></div><div class="metric"><b>${a.volRatio.toFixed(2)}배</b><span>거래량</span></div><div class="metric"><b>${a.momentum}</b><span>모멘텀</span></div><div class="metric"><b>${a.volatility}</b><span>변동성</span></div></div>
+ <div class="actions"><button class="detail" onclick="refreshOne('${a.symbol}')">다시 분석</button><button class="watch" onclick="toggleWatch('${a.symbol}')">${watched?'관심 해제':'관심 등록'}</button></div></div>`;
+}
+function render(){
+ const arr=stocks.map(analyze).sort((a,b)=>b.score-a.score);stockList.innerHTML=arr.map(card).join("")||'<div class="empty">분석 종목이 없습니다.</div>';
+ cnt.textContent=arr.length;strong.textContent=arr.filter(x=>x.score>=80).length;surge.textContent=arr.filter(x=>x.volRatio>=1.3).length;watchCnt.textContent=watch.length;
+ symbolList.innerHTML=symbols.map(x=>`<div class="card"><b>${names[x]||x}</b><div class="ticker">${x}</div><button class="primary danger" onclick="removeSymbol('${x}')">목록에서 삭제</button></div>`).join("");
+ const ws=stocks.filter(s=>watch.includes(s.symbol));watchList.innerHTML=ws.length?ws.map(card).join(""):'<div class="empty">관심종목이 없습니다.</div>';
+ journalList.innerHTML=journal.length?journal.map((j,i)=>`<div class="card"><b>${j.symbol}</b><div class="ticker">${j.date}</div><p>매수가 ${j.buy||'-'} · 매도가 ${j.sell||'-'} · 수익률 ${j.rate}</p><div class="reason">${j.memo||''}</div></div>`).join(""):'<div class="empty">저장된 매매일지가 없습니다.</div>';
+ modePill.textContent=settings.provider==="demo"?"데모 모드":settings.provider==="alpha"?"Alpha Vantage":"전용 서버";timePill.textContent=new Date().toLocaleString("ko-KR",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})+" 갱신";
+}
+async function alphaFetch(symbol){
+ const key=settings.apiKey;if(!key)throw new Error("API 키가 없습니다.");
+ const q=await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${encodeURIComponent(symbol)}&apikey=${encodeURIComponent(key)}`).then(r=>r.json());
+ const d=await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${encodeURIComponent(symbol)}&outputsize=compact&apikey=${encodeURIComponent(key)}`).then(r=>r.json());
+ if(q.Note||d.Note)throw new Error("API 호출 한도를 초과했습니다.");
+ const g=q["Global Quote"]||{};const series=d["Time Series (Daily)"]||{};const rows=Object.entries(series).slice(0,30);
+ if(!g["05. price"]||!rows.length)throw new Error("종목 데이터를 찾지 못했습니다.");
+ const vols=rows.map(([,v])=>+v["5. volume"]);const closes=rows.map(([,v])=>+v["4. close"]).reverse();
+ return {symbol,name:names[symbol]||symbol,price:+g["05. price"],changePercent:parseFloat(g["10. change percent"]),volume:+g["06. volume"],avgVolume:avg(vols),closes};
+}
+async function proxyFetch(symbol){
+ if(!settings.proxyUrl)throw new Error("전용 서버 주소가 없습니다.");
+ const sep=settings.proxyUrl.includes("?")?"&":"?";
+ const d=await fetch(settings.proxyUrl+sep+"symbol="+encodeURIComponent(symbol)).then(r=>{if(!r.ok)throw new Error("서버 응답 오류");return r.json()});
+ return d;
+}
+async function fetchSymbol(symbol){
+ if(settings.provider==="demo"){const d=demo.find(x=>x.symbol===symbol);if(!d)throw new Error("데모에 없는 종목입니다.");return d}
+ if(settings.provider==="alpha")return alphaFetch(symbol);
+ return proxyFetch(symbol);
+}
+async function refreshAll(){
+ loading.classList.add("show");
+ const result=[];
+ for(const s of symbols){try{result.push(await fetchSymbol(s))}catch(e){const old=stocks.find(x=>x.symbol===s);if(old)result.push(old)}}
+ stocks=result;localStorage.setItem("v8stocks",JSON.stringify(stocks));loading.classList.remove("show");render();
+}
+async function refreshOne(symbol){try{const d=await fetchSymbol(symbol);stocks=stocks.filter(x=>x.symbol!==symbol);stocks.push(d);localStorage.setItem("v8stocks",JSON.stringify(stocks));render()}catch(e){alert(e.message)}}
+async function addSymbol(){const s=symbolInput.value.trim().toUpperCase();if(!s)return alert("종목 코드를 입력하세요.");names[s]=nameInput.value.trim()||s;if(!symbols.includes(s))symbols.push(s);localStorage.setItem("v8symbols",JSON.stringify(symbols));localStorage.setItem("v8names",JSON.stringify(names));try{const d=await fetchSymbol(s);stocks.push(d);localStorage.setItem("v8stocks",JSON.stringify(stocks))}catch(e){alert("목록은 추가했지만 데이터 조회는 실패했습니다: "+e.message)}render()}
+function removeSymbol(s){symbols=symbols.filter(x=>x!==s);stocks=stocks.filter(x=>x.symbol!==s);localStorage.setItem("v8symbols",JSON.stringify(symbols));localStorage.setItem("v8stocks",JSON.stringify(stocks));render()}
+function toggleWatch(s){watch=watch.includes(s)?watch.filter(x=>x!==s):[...watch,s];localStorage.setItem("v8watch",JSON.stringify(watch));render()}
+function clearWatch(){watch=[];localStorage.setItem("v8watch","[]");render()}
+function saveJournal(){const buy=+jBuy.value,sell=+jSell.value;const rate=buy&&sell?((sell-buy)/buy*100).toFixed(2)+"%":"-";journal.unshift({symbol:jSymbol.value,date:new Date().toLocaleString("ko-KR"),buy,sell,rate,memo:jMemo.value});localStorage.setItem("v8journal",JSON.stringify(journal));render()}
+function saveSettings(){settings={provider:provider.value,apiKey:apiKey.value.trim(),proxyUrl:proxyUrl.value.trim()};localStorage.setItem("v8settings",JSON.stringify(settings));render();alert("설정을 저장했습니다.")}
+async function testConnection(){try{await fetchSymbol(symbols[0]||"NVDA");alert("연결 성공")}catch(e){alert("연결 실패: "+e.message)}}
+function showTab(id,b){document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");scrollTo(0,0)}
+function resetAll(){if(!confirm("모든 데이터와 설정을 초기화할까요?"))return;["v8symbols","v8names","v8settings","v8stocks","v8watch","v8journal"].forEach(k=>localStorage.removeItem(k));location.reload()}
+provider.value=settings.provider;apiKey.value=settings.apiKey;proxyUrl.value=settings.proxyUrl;render();
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script>
+</body></html>
